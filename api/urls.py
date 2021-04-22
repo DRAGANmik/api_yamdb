@@ -3,14 +3,13 @@ from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,)
-from .views import PostViewSet, CommentViewSet, FollowViewSet, GroupViewSet
+from .views import TitleViewSet, CategoryViewSet, GenreViewSet
 
 router = DefaultRouter()
-router.register('posts', PostViewSet, basename='Posts')
-router.register('group', GroupViewSet, basename='Groups')
-router.register('follow', FollowViewSet, basename='Follows')
-router.register(r'posts/(?P<post_id>\d+)/comments', CommentViewSet,
-                basename='Comments')
+router.register('titles', TitleViewSet, basename='Titles')
+router.register('categories', CategoryViewSet, basename='Categories')
+router.register('genres', GenreViewSet, basename='Genres')
+
 urlpatterns = [
     path('v1/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('v1/token/refresh/', TokenRefreshView.as_view(),

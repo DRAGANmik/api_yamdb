@@ -1,50 +1,33 @@
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
 
-from .models import Comment, Post, Follow, Group
+from .models import Category, Genre, Title
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
-
-class PostSerializer(serializers.ModelSerializer):
-    author = serializers.SlugRelatedField(read_only=True,
-                                          slug_field='username')
-
+class GenreSerializer(serializers.ModelSerializer):
     class Meta:
-        fields = ('id', 'text', 'author', 'pub_date')
-        model = Post
+        fields = '__all__'
+        model = Genre
 
 
-class CommentSerializer(serializers.ModelSerializer):
-    author = serializers.SlugRelatedField(read_only=True,
-                                          slug_field='username')
-
+class CategorySerializer(serializers.ModelSerializer):
     class Meta:
-        fields = ('id', 'author', 'post', 'text', 'created')
-        model = Comment
+        fields = '__all__'
+        model = Category
 
-
-class FollowSerializer(serializers.ModelSerializer):
-    user = serializers.SlugRelatedField(
-        slug_field='username',
-        default=serializers.CurrentUserDefault(),
-        queryset=User.objects.all())
-    following = serializers.SlugRelatedField(slug_field='username',
-                                             queryset=User.objects.all())
-
+class TitleSerializer(serializers.ModelSerializer):
+    
+    category = CategorySerializer(required=False, read_only=True, many=True)
+    genre = GenreSerializer(required=False, read_only=True, many=True)     
     class Meta:
-        fields = ('user', 'following')
-        model = Follow
-        validators = [UniqueTogetherValidator(
-            queryset=Follow.objects.all(), fields=['user', 'following'])]
-
-    def validate(self, data):
-        if data['user'] == data['following']:
-            raise serializers.ValidationError('Нельзя подписаться на себя')
-        return data
+        fields = ('id', 'name','genre', 'category', 'year' )
+        model = Title
 
 
-class GroupSerializer(serializers.ModelSerializer):
-    class Meta:
-        fields = ('id', 'title')
-        model = Group
+
+
+
+    
+
+
