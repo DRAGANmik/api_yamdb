@@ -1,5 +1,10 @@
 from django.contrib import admin
+<<<<<<< HEAD
+from django.contrib import admin
+from django.urls import include, path
+=======
 from django.urls import path, include
+>>>>>>> master
 from django.views.generic import TemplateView
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -9,6 +14,7 @@ from rest_framework_simplejwt.views import (
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/', include('api.urls')),
     path(
         'api/v1/auth/token/',
         TokenObtainPairView.as_view(),
