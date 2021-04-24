@@ -16,6 +16,9 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        ordering = ['id']
+
 
 class Genre(models.Model):
     name = models.CharField(verbose_name='Название жанра',
@@ -28,6 +31,9 @@ class Genre(models.Model):
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        ordering = ['id']
 
 
 class Title(models.Model):
@@ -50,3 +56,6 @@ class Title(models.Model):
                               null=True)
     def __str__(self):
         return self.name
+
+    class Meta:
+        ordering = ['id']

@@ -1,8 +1,6 @@
 from django.db import models
-<<<<<<< HEAD
 
 # Create your models here.
-=======
 from django.contrib.auth.models import PermissionsMixin
 from django.contrib.auth.base_user import AbstractBaseUser
 
@@ -48,4 +46,4 @@ class User(AbstractBaseUser, PermissionsMixin):
     def get_short_name(self):
         return self.username
 
->>>>>>> master
+    

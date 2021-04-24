@@ -7,24 +7,25 @@ from .models import Title, Category, Genre
 from django.contrib.auth.models import User
 from .serializers import (TitleSerializer, CategorySerializer,
                           GenreSerializer)
-from .permissions import IsAuthorOrReadOnly
-
+from .permissions import IsAdmin
 
 
 
 class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all()
     serializer_class = TitleSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAdmin, IsAuthenticatedOrReadOnly]
     
 
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    lookup_field = 'slug'
+    permission_classes = [IsAdmin, IsAuthenticatedOrReadOnly]
 
 
 class GenreViewSet(viewsets.ModelViewSet):
     queryset = Genre.objects.all()
+    lookup_field = 'slug'
     serializer_class = GenreSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAdmin, IsAuthenticatedOrReadOnly]

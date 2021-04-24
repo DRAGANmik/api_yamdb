@@ -2,8 +2,7 @@ from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
 
 from .models import Category, Genre, Title
-from django.contrib.auth import get_user_model
-User = get_user_model()
+
 
 class GenreSerializer(serializers.ModelSerializer):
     class Meta:
