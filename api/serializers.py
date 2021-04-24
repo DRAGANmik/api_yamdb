@@ -1,33 +1,39 @@
 from rest_framework import serializers
+from .models import  Category, Genre, Title, Review, Comment, Title
 from rest_framework.validators import UniqueTogetherValidator
 
-from .models import Category, Genre, Title
-from django.contrib.auth import get_user_model
-User = get_user_model()
-
-class GenreSerializer(serializers.ModelSerializer):
-    class Meta:
-        fields = '__all__'
-        model = Genre
-
-
-class CategorySerializer(serializers.ModelSerializer):
-    class Meta:
-        fields = '__all__'
-        model = Category
 
 class TitleSerializer(serializers.ModelSerializer):
-    
-    category = CategorySerializer(required=False, read_only=True, many=True)
-    genre = GenreSerializer(required=False, read_only=True, many=True)     
+    rating = serializers.CharField(read_only=True)
+    name = serializers.CharField(read_only=True)
+
     class Meta:
-        fields = ('id', 'name','genre', 'category', 'year' )
+        fields = '__all__'
         model = Title
 
 
+class ReviewSerializer(serializers.ModelSerializer):
+    author = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='username')
 
-
-
+    title = serializers.PrimaryKeyRelatedField(read_only=True)
     
+    class Meta:
+        fields = '__all__'
+        model = Review
+        validators = [UniqueTogetherValidator(
+            queryset=Review.objects.all(),
+            fields=['author', 'title', ],
+            message='Вы уже комментировали данное произведение')]
 
 
+class CommentSerializer(serializers.ModelSerializer):
+    author = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='username')
+    review = serializers.PrimaryKeyRelatedField(read_only=True)
+
+    class Meta:
+        fields = '__all__'
+        model = Comment
