@@ -5,9 +5,10 @@ class IsAdmin(BasePermission):
     def has_permission(self, request, view):
         if request.method in SAFE_METHODS:
             return True
-        elif request.user.is_anonymous and request.method != ['POST', 'DELETE', 'PATCH']:
+        elif (request.user.is_anonymous and request.method != ['POST',
+              'DELETE', 'PATCH']):
             return True
         elif request.user.role == 'admin':
             return True
-        else: 
+        else:
             return False
