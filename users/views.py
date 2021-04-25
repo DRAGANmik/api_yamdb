@@ -1,3 +1,9 @@
+<<<<<<< HEAD
+=======
+from django.shortcuts import render
+
+# Create your views here.
+>>>>>>> 06ffc1ee8fc2610ef55325a80006d4807a7158c6
 
 from rest_framework.views import APIView
 from rest_framework.response import Response

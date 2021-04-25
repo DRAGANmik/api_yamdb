@@ -37,9 +37,18 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+<<<<<<< HEAD
     'rest_framework',
     'users',
     'api',
+=======
+    'api',
+    'rest_framework',
+    'users',
+    'api',
+    'django_filters',
+
+>>>>>>> 06ffc1ee8fc2610ef55325a80006d4807a7158c6
 ]
 
 MIDDLEWARE = [
@@ -75,9 +84,18 @@ WSGI_APPLICATION = 'api_yamdb.wsgi.application'
 
 
 REST_FRAMEWORK = {
+<<<<<<< HEAD
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
+=======
+    # 'DEFAULT_AUTHENTICATION_CLASSES': (
+    # 'rest_framework_simplejwt.authentication.JWTAuthentication',
+    # ),
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny',
+    ],
+>>>>>>> 06ffc1ee8fc2610ef55325a80006d4807a7158c6
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10
     }
@@ -141,4 +159,7 @@ CORS_ORIGIN_ALLOW_ALL = True
 CORS_URLS_REGEX = r'^/api/.*$'
 
 
+<<<<<<< HEAD
 AUTH_USER_MODEL = 'users.User'
+=======
+>>>>>>> 06ffc1ee8fc2610ef55325a80006d4807a7158c6
