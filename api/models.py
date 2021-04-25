@@ -37,7 +37,7 @@ class Genre(models.Model):
 
 
 class Title(models.Model):
-    name = models.TextField()
+    name = models.TextField(verbose_name='Название')
     year = models.DateTimeField(
         "Год публикации", auto_now_add=True)
     
@@ -48,11 +48,14 @@ class Title(models.Model):
                               related_name='titles',
                               blank=True,
                               null=True)
-    genre = models.ManyToManyField(Genre,
+    genre = models.ForeignKey(Genre,
                               verbose_name='Жанр',
                               help_text='Выберите жанр',
+                              on_delete=models.SET_NULL,
                               related_name='titles',
                               blank=True,
+                              null=True)
+    description = models.TextField(verbose_name='Описание', blank=True,
                               null=True)
     def __str__(self):
         return self.name

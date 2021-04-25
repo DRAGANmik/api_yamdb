@@ -15,7 +15,8 @@ class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all()
     serializer_class = TitleSerializer
     permission_classes = [IsAdmin, IsAuthenticatedOrReadOnly]
-    
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['name','genre', 'category', 'year' ]
 
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
