@@ -6,13 +6,13 @@ from .models import Category, Genre, Title
 
 class GenreSerializer(serializers.ModelSerializer):
     class Meta:
-        fields = '__all__'
+        fields = ['name', 'slug']
         model = Genre
 
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
-        fields = '__all__'
+        fields = ['name', 'slug']
         model = Category
 
 class TitleSerializer(serializers.ModelSerializer):
