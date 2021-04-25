@@ -6,11 +6,13 @@ User = get_user_model()
 
 class Category(models.Model):
     name = models.CharField(verbose_name='Название категории',
-                             max_length=200)
+                             max_length=200,
+                             )
     slug = models.SlugField(verbose_name="Адрес для категории",
                             max_length=100,
                             unique=True,
-                            help_text='Используйте латиницу')
+                            help_text='Используйте латиницу',
+                            )
     
 
     def __str__(self):
@@ -22,11 +24,13 @@ class Category(models.Model):
 
 class Genre(models.Model):
     name = models.CharField(verbose_name='Название жанра',
-                             max_length=200)
+                             max_length=200,
+                             )
     slug = models.SlugField(verbose_name="Адрес для жанра",
                             max_length=100,
                             unique=True,
-                            help_text='Используйте латиницу')
+                            help_text='Используйте латиницу',
+                            )
     
 
     def __str__(self):
@@ -48,10 +52,9 @@ class Title(models.Model):
                               related_name='titles',
                               blank=True,
                               null=True)
-    genre = models.ForeignKey(Genre,
+    genre = models.ManyToManyField(Genre,
                               verbose_name='Жанр',
                               help_text='Выберите жанр',
-                              on_delete=models.SET_NULL,
                               related_name='titles',
                               blank=True,
                               null=True)
