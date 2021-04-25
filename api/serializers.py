@@ -1,20 +1,9 @@
 from rest_framework import serializers
-from .models import  Category, Genre, Title, Review, Comment, Title
+from .models import Category, Genre, Title, Review, Comment
 from rest_framework.validators import UniqueTogetherValidator
 
 
-from .models import Category, Genre, Title
-
-
-class GenreSerializer(serializers.ModelSerializer):
-    class Meta:
-        fields = ['name', 'slug']
-        model = Genre
-
-class TitleSerializer(serializers.ModelSerializer):
-    rating = serializers.CharField(read_only=True)
-    name = serializers.CharField(read_only=True)
-
+class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         fields = ['name', 'slug']
         model = Category
@@ -25,25 +14,25 @@ class TitleSerializer(serializers.ModelSerializer):
         return {'name': category['name'],
                 'slug': category['slug']}
 
-class ReviewSerializer(serializers.ModelSerializer):
-    author = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field='username')
 
-    title = serializers.PrimaryKeyRelatedField(read_only=True)
-    
+class GenreSerializer(serializers.ModelSerializer):
     class Meta:
-        fields = '__all__'
-        model = Review
-        validators = [UniqueTogetherValidator(
-            queryset=Review.objects.all(),
-            fields=['author', 'title', ],
-            message='Вы уже комментировали данное произведение')]
+        fields = ['name', 'slug']
+        model = Genre
+
+    def to_representation(self, instance):
+        category = super().to_representation(instance)
+
+        return {'name': category['name'],
+                'slug': category['slug']}
+
+
 class TitleSerializer1(serializers.ModelSerializer):
     category = serializers.SlugRelatedField(queryset=Category.objects.all(),
                                             slug_field='slug')
     genre = serializers.SlugRelatedField(queryset=Genre.objects.all(),
                                          slug_field='slug', many=True)
+    rating = serializers.CharField(read_only=True)
 
     class Meta:
         fields = '__all__'
@@ -53,6 +42,28 @@ class TitleSerializer1(serializers.ModelSerializer):
 class TitleSerializer2(serializers.ModelSerializer):
     category = CategorySerializer(required=False, read_only=True)
     genre = GenreSerializer(required=False, read_only=True, many=True)
+    rating = serializers.CharField(read_only=True)
+
+    class Meta:
+        fields = '__all__'
+        model = Title
+
+
+class ReviewSerializer(serializers.ModelSerializer):
+    author = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='username')
+
+    title = serializers.PrimaryKeyRelatedField(read_only=True)
+
+    class Meta:
+        fields = '__all__'
+        model = Review
+        validators = [UniqueTogetherValidator(
+            queryset=Review.objects.all(),
+            fields=['author', 'title', ],
+            message='Вы уже комментировали данное произведение')]
+
 
 class CommentSerializer(serializers.ModelSerializer):
     author = serializers.SlugRelatedField(
@@ -63,6 +74,4 @@ class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         fields = '__all__'
         model = Comment
-    class Meta:
-        fields = '__all__'
-        model = Title
+
