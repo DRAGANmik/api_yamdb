@@ -6,6 +6,7 @@ from rest_framework import mixins
 from .serializers import (TitleSerializer1, TitleSerializer2,
                           CategorySerializer, GenreSerializer)
 from .permissions import IsAdmin
+from .filters import TitleFilter
 
 
 class CreateListDestroyViewSet(mixins.CreateModelMixin,
@@ -19,8 +20,8 @@ class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all()
     serializer_class = TitleSerializer1
     permission_classes = [IsAdmin, IsAuthenticatedOrReadOnly]
-    filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['category__slug', 'genre__slug', 'name', 'year']
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = TitleFilter
 
     def get_serializer_class(self):
         actions = ['list', 'retrieve']

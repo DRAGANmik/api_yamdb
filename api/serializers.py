@@ -11,7 +11,7 @@ class GenreSerializer(serializers.ModelSerializer):
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
-        fields = ['id', 'name', 'slug']
+        fields = ['name', 'slug']
         model = Category
 
     def to_representation(self, instance):
