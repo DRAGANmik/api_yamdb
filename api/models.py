@@ -64,7 +64,7 @@ class Title(models.Model):
 class Review(models.Model):
     text = models.TextField()
     author = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="reviews"
+        User, on_delete=models.CASCADE, related_name="reviews",
     )
     title = models.ForeignKey(
         Title, on_delete=models.CASCADE, related_name="reviews"
@@ -76,6 +76,12 @@ class Review(models.Model):
 
     def __str__(self):
         return self.text
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['title', 'author'],
+                                    name='unique_pair')
+        ]
 
 
 class Comment(models.Model):
