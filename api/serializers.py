@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from .models import Category, Genre, Title, Review, Comment
 from users.models import User
@@ -61,25 +62,33 @@ class ReviewSerializer(serializers.ModelSerializer):
         fields = ['id', 'text', 'author', 'score', 'pub_date']
         model = Review
         #validators=[UniqueValidator(queryset=User.objects.all())]
-        validators = [UniqueTogetherValidator(
-            queryset=Review.objects.all(),
-            fields=['author', 'title', ],
-            message='Вы уже комментировали данное произведение')]
-    def validate(self, data):
-        if data['user'] == data['following']:
-            raise serializers.ValidationError(
-                'Невозможно подписаться на самого себя'
-            )
-        return data
+        # validators = [UniqueTogetherValidator(
+        #     queryset=Review.objects.all(),
+        #     fields=['author', 'title', ],
+        #     message='Вы уже комментировали данное произведение')]
+    # def validate(self, data):
+    #     if data['user'] == data['following']:
+    #         raise serializers.ValidationError(
+    #             'Невозможно подписаться на самого себя'
+    #         )
+    #     return data
     # def validate_title(self, user):
     #     unique_pair = Review.objects.filter(
     #         title=self.data.get('title_id'),
-    #         reviews__author__username=user
+    #         author__username=user
     #     )
     #     if unique_pair.exists():
     #         raise serializers.ValidationError('Подписка уже оформлена')
     #     return user
 
+    def validate(self, data):
+        title_id = self.context['request'].parser_context['kwargs'].get('title_id')
+        author = self.context['request'].user
+        current_title = get_object_or_404(Title,id=title_id)
+        if (self.context['request'].method == 'POST'
+                and current_title.reviews.filter(author=author).exists()):
+            raise serializers.ValidationError('Отзыв на это произведение уже существует')
+        return data
 
 class CommentSerializer(serializers.ModelSerializer):
     author = serializers.SlugRelatedField(
