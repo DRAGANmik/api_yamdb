@@ -147,4 +147,9 @@ dmypy.json
 
 # папки со статикой и медиа
 media/
+<<<<<<< HEAD
+=======
+sent_emails/
+tests/
+>>>>>>> A
 
