@@ -2,17 +2,17 @@ from rest_framework import viewsets, filters
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
-from .models import Comment, Review, Title
-from .serializers import CommentSerializer, ReviewSerializer
-#from .permissions import IsAuthorOrReadOnly
-from django.db.models import Avg
 
+from .serializers import CommentSerializer, ReviewSerializer
+from django.db.models import Avg
+from .models import Comment, Review
 from .models import Title, Category, Genre
 from rest_framework import mixins
 from .serializers import (TitleSerializer1, TitleSerializer2,
                           CategorySerializer, GenreSerializer)
-from .permissions import IsAdmin, IsAuthorOrReadOnly
+from .permissions import IsAdmin, IsModeratorOrAuthor
 from .filters import TitleFilter
+
 
 class CreateListDestroyViewSet(mixins.CreateModelMixin,
                                mixins.ListModelMixin,
@@ -21,9 +21,7 @@ class CreateListDestroyViewSet(mixins.CreateModelMixin,
     pass
 
 
-
 class TitleViewSet(viewsets.ModelViewSet):
-    queryset = Title.objects.all()
     serializer_class = TitleSerializer1
     permission_classes = [IsAdmin, IsAuthenticatedOrReadOnly]
     filter_backends = (DjangoFilterBackend,)
@@ -31,7 +29,7 @@ class TitleViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         queryset = Title.objects.annotate(rating=Avg('reviews__score'))
-        return queryset
+        return queryset.order_by('id')
 
     def get_serializer_class(self):
         actions = ['list', 'retrieve']
@@ -48,6 +46,7 @@ class CategoryViewSet(CreateListDestroyViewSet):
     search_fields = ['name']
     permission_classes = [IsAdmin, IsAuthenticatedOrReadOnly]
 
+
 class GenreViewSet(CreateListDestroyViewSet):
     queryset = Genre.objects.all()
     lookup_field = 'slug'
@@ -57,41 +56,29 @@ class GenreViewSet(CreateListDestroyViewSet):
     permission_classes = [IsAdmin, IsAuthenticatedOrReadOnly]
 
 
-
 class CommentViewSet(viewsets.ModelViewSet):
-    queryset = Comment.objects.all()
     serializer_class = CommentSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly]
-    # permission_classes = [IsAuthenticatedOrReadOnly]
-    #
+    permission_classes = [IsAuthenticatedOrReadOnly, IsModeratorOrAuthor]
+
     def perform_create(self, serializer):
         review = get_object_or_404(Review, pk=self.kwargs.get('review_id'))
-        if self.request.user.is_authenticated:
-            serializer.save(author=self.request.user, review=review)
-        serializer.save( review=review)
+        serializer.save(author=self.request.user, review=review)
 
-    # def get_queryset(self):
-    #     review = get_object_or_404(Review, pk=self.kwargs.get('review_id'))
-    #     queryset = Comment.objects.filter(review=review)
-    #     #return review.comments
-    #     return queryset
+    def get_queryset(self):
+        review = get_object_or_404(Review, pk=self.kwargs.get('review_id'))
+        queryset = Comment.objects.filter(review=review)
+        return queryset
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
-    queryset = Review.objects.all()
     serializer_class = ReviewSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly]
-    # permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticatedOrReadOnly, IsModeratorOrAuthor]
 
     def perform_create(self, serializer):
         title = get_object_or_404(Title, pk=self.kwargs.get('title_id'))
         serializer.save(author=self.request.user, title=title)
 
-    # def get_queryset(self):
-    #     title = get_object_or_404(Title, pk=self.kwargs.get('title_id'))
-    #     queryset = Review.objects.filter(title=title)
-    #
-    #     # return title.reviews
-    #     return queryset
-
-
+    def get_queryset(self):
+        title = get_object_or_404(Title, pk=self.kwargs.get('title_id'))
+        queryset = Review.objects.filter(title=title)
+        return queryset
