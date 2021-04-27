@@ -1,23 +1,19 @@
-from django.shortcuts import render
-
-# Create your views here.
-
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status, viewsets
+from rest_framework import status, viewsets, permissions
 from django.http import Http404
-from .serializers import UserSerializer, DetailSerializer, RegistrationSerializer
+from .serializers import UserSerializer,\
+    DetailSerializer, RegistrationSerializer
 from .models import User
-from .permissions import *
+from .permissions import IsADM
 
 
-class RegistationAPIView(APIView):
+class RegistrationAPIView(APIView):
     permission_classes = (permissions.AllowAny,)
     serializer_class = RegistrationSerializer
 
     def post(self, request):
         data = request.data
-
         serializer = self.serializer_class(data=data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -55,4 +51,3 @@ class MeDetail(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-

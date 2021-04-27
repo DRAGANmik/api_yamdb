@@ -24,7 +24,8 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
         send_mail(
             'Быстрая регистрация',
-            f'Спасибо за регистрацию {username}, вот ваш временный пароль {password}',
+            f'Спасибо за регистрацию {username}, '
+            f'вот ваш временный пароль {password}',
             'from@example.com',
             [email],
             fail_silently=False,
@@ -36,13 +37,26 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['username', 'last_name', 'first_name', 'email', 'bio', 'role']
+        fields = [
+            'username',
+            'last_name',
+            'first_name',
+            'email',
+            'bio',
+            'role'
+        ]
 
 
 class DetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['username', 'last_name', 'first_name', 'email', 'bio', 'role']
+        fields = [
+            'username',
+            'last_name',
+            'first_name',
+            'email',
+            'bio',
+            'role'
+        ]
         read_only_fields = ('role',)
-
