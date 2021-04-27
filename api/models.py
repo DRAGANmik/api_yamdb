@@ -12,12 +12,10 @@ class Category(models.Model):
                             unique=True,
                             help_text='Используйте латиницу')
 
-
     class Meta:
         ordering = ['id']
         verbose_name = 'category'
-    
-    
+
     def __str__(self):
         return self.name
 
@@ -30,11 +28,9 @@ class Genre(models.Model):
                             unique=True,
                             help_text='Используйте латиницу')
 
-
     class Meta:
         ordering = ['id']
         verbose_name = 'genre'
-
 
     def __str__(self):
         return self.name
@@ -60,10 +56,9 @@ class Title(models.Model):
                                    blank=True,
                                    null=True)
 
-
     class Meta:
-        ordering = ['id',]
-    
+        ordering = ['id']
+
     def __str__(self):
         return self.name
 

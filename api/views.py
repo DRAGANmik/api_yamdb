@@ -2,7 +2,6 @@ from rest_framework import viewsets, filters
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
-from rest_framework.pagination import PageNumberPagination
 
 
 from .serializers import CommentSerializer, ReviewSerializer
@@ -24,13 +23,13 @@ class CreateListDestroyViewSet(mixins.CreateModelMixin,
 
 
 class TitleViewSet(viewsets.ModelViewSet):
-    queryset = Title.objects.annotate(rating=Avg('reviews__score')).order_by('rating')
+    queryset = Title.objects.annotate(rating=Avg(
+                                      'reviews__score')).order_by('rating')
     serializer_class = TitleWriteSerializer
     permission_classes = [IsAdmin, IsAuthenticatedOrReadOnly]
     filter_backends = (DjangoFilterBackend,)
     filterset_class = TitleFilter
-    
-    
+
     def get_serializer_class(self):
         actions = ['list', 'retrieve']
         if self.action in actions:

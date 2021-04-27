@@ -1,5 +1,6 @@
 from rest_framework.permissions import BasePermission, SAFE_METHODS
-from users.models import User 
+from users.models import User
+
 
 class IsModeratorOrAuthor(BasePermission):
     def has_object_permission(self, request, view, obj):
@@ -22,4 +23,3 @@ class IsAdmin(BasePermission):
             return True
         else:
             return False
-
