@@ -9,7 +9,7 @@ from django.db.models import Avg
 from .models import Comment, Review
 from .models import Title, Category, Genre
 from rest_framework import mixins
-from .serializers import (TitleSerializer1, TitleSerializer2,
+from .serializers import (TitleWriteSerializer, TitleReadSerializer,
                           CategorySerializer, GenreSerializer)
 from .permissions import IsAdmin, IsModeratorOrAuthor
 from .filters import TitleFilter
@@ -23,7 +23,9 @@ class CreateListDestroyViewSet(mixins.CreateModelMixin,
 
 
 class TitleViewSet(viewsets.ModelViewSet):
-    serializer_class = TitleSerializer1
+    queryset = Title.objects.annotate(rating=Avg(
+                                      'reviews__score')).order_by('rating')
+    serializer_class = TitleWriteSerializer
     permission_classes = [IsAdmin, IsAuthenticatedOrReadOnly]
     filter_backends = (DjangoFilterBackend,)
     filterset_class = TitleFilter
@@ -35,8 +37,8 @@ class TitleViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         actions = ['list', 'retrieve']
         if self.action in actions:
-            return TitleSerializer2
-        return TitleSerializer1
+            return TitleReadSerializer
+        return TitleWriteSerializer
 
 
 class CategoryViewSet(CreateListDestroyViewSet):
@@ -62,15 +64,11 @@ class CommentViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticatedOrReadOnly, IsModeratorOrAuthor]
 
     def perform_create(self, serializer):
-        review = get_object_or_404(
-            Review, pk=self.kwargs.get('review_id'),
-            title=self.kwargs.get('title_id'))
+        review = get_object_or_404(Review, pk=self.kwargs.get('review_id'))
         serializer.save(author=self.request.user, review=review)
 
     def get_queryset(self):
-        review = get_object_or_404(
-            Review, pk=self.kwargs.get('review_id'),
-            title=self.kwargs.get('title_id'))
+        review = get_object_or_404(Review, pk=self.kwargs.get('review_id'))
         queryset = Comment.objects.filter(review=review)
         return queryset
 

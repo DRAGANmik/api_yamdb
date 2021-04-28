@@ -24,7 +24,7 @@ class TokenAPI(APIView):
             token = AccessToken.for_user(user)
             # refresh
             user.confirmation_code = default_token_generator.make_token(user)
-            return Response({'token': str(token)}, status=status.HTTP_200_OK)
+            return Response({'token': str(token)}, status=status.HTTP_201_CREATED)
         except User.DoesNotExist:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
@@ -42,8 +42,7 @@ class EmailConfirmationAPIView(APIView):
                   f'Your code: {confirmation_code}',
                   'admin@admin.ru',
                   [request.data['email']])
-        return Response({'status': "send email"}, status=status.HTTP_200_OK)
-
+        return Response({'status': "send email"}, status=status.HTTP_201_CREATED)
 
 class UserViewSet(viewsets.ModelViewSet):
 

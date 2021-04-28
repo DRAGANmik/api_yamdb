@@ -1,7 +1,6 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from .models import Category, Genre, Title, Review, Comment
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -28,7 +27,7 @@ class GenreSerializer(serializers.ModelSerializer):
                 'slug': category['slug']}
 
 
-class TitleSerializer1(serializers.ModelSerializer):
+class TitleWriteSerializer(serializers.ModelSerializer):
     category = serializers.SlugRelatedField(queryset=Category.objects.all(),
                                             slug_field='slug')
     genre = serializers.SlugRelatedField(queryset=Genre.objects.all(),
@@ -40,7 +39,7 @@ class TitleSerializer1(serializers.ModelSerializer):
         model = Title
 
 
-class TitleSerializer2(serializers.ModelSerializer):
+class TitleReadSerializer(serializers.ModelSerializer):
     category = CategorySerializer(required=False, read_only=True)
     genre = GenreSerializer(required=False, read_only=True, many=True)
     rating = serializers.IntegerField(read_only=True)
@@ -80,16 +79,3 @@ class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         fields = ['id', 'text', 'author', 'pub_date']
         model = Comment
-
-
-
-class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
-    @classmethod
-    def get_token(cls, user):
-        token = super().get_token(user)
-
-        # Add custom claims
-        token['name'] = user.username
-        # ...
-
-        return token
