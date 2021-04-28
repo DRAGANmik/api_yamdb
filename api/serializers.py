@@ -1,6 +1,7 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from .models import Category, Genre, Title, Review, Comment
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -79,3 +80,16 @@ class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         fields = ['id', 'text', 'author', 'pub_date']
         model = Comment
+
+
+
+class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+
+        # Add custom claims
+        token['name'] = user.username
+        # ...
+
+        return token

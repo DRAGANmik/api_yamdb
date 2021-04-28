@@ -1,15 +1,11 @@
 from django.db import models
 from django.contrib.auth.models import PermissionsMixin
 from django.contrib.auth.base_user import AbstractBaseUser
-
 from .managers import UserManager
 
 
 class User(AbstractBaseUser, PermissionsMixin):
     class Role(models.TextChoices):
-        # USER = 'U', _('user')
-        # MODERATOR = 'M', _('moderator')
-        # ADMIN = 'A', _('admin')
         USER = 'user'
         MODERATOR = 'moderator'
         ADMIN = 'admin'
@@ -29,6 +25,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    confirmation_code = models.CharField(max_length=20)
 
     objects = UserManager()
 
@@ -43,3 +40,13 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def get_short_name(self):
         return self.username
+
+    @property
+    def is_admin(self):
+        return self.Role.ADMIN
+
+    @property
+    def is_moderator(self):
+        return self.Role.MODERATOR
+
+

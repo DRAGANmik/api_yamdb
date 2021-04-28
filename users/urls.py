@@ -1,13 +1,13 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import UserViewSet, MeDetail, RegistrationAPIView
+from .views import UserViewSet, EmailConfirmationAPIView, TokenAPI
 
 
 router = DefaultRouter()
 router.register(r'users', UserViewSet, basename='users')
 
 urlpatterns = [
-    path(r'v1/users/me/', MeDetail.as_view()),
     path('v1/', include(router.urls)),
-    path('v1/auth/email/', RegistrationAPIView.as_view()),
+    path('v1/auth/email/', EmailConfirmationAPIView.as_view()),
+    path('v1/auth/token/', TokenAPI.as_view())
 ]

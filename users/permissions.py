@@ -6,4 +6,4 @@ class IsADM(permissions.BasePermission):
         if not request.user.is_anonymous:
             return bool(
                 (request.user and request.user.is_staff)
-                or (request.user and request.user.role == 'admin'))
+                or (request.user.role == request.user.is_admin))

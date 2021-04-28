@@ -1,23 +1,48 @@
+from django.shortcuts import get_object_or_404
+from rest_framework.decorators import action
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, viewsets, permissions
-from django.http import Http404
 from .serializers import UserSerializer,\
-    DetailSerializer, RegistrationSerializer
+    DetailSerializer, EmailConfirmationSerializer, TokenSerializer
 from .models import User
 from .permissions import IsADM
+from django.contrib.auth.tokens import default_token_generator
+from django.core.mail import send_mail
+from rest_framework_simplejwt.tokens import AccessToken
 
 
-class RegistrationAPIView(APIView):
-    permission_classes = (permissions.AllowAny,)
-    serializer_class = RegistrationSerializer
+class TokenAPI(APIView):
+    serializer_class = TokenSerializer
+    permission_classes = [permissions.AllowAny]
 
     def post(self, request):
-        data = request.data
-        serializer = self.serializer_class(data=data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(status=status.HTTP_201_CREATED)
+        email = request.data.get('email')
+        confirmation_code = self.request.data.get('confirmation_code')
+        try:
+            user = get_object_or_404(User, email=email, confirmation_code=confirmation_code)
+            token = AccessToken.for_user(user)
+            # refresh
+            user.confirmation_code = default_token_generator.make_token(user)
+            return Response({'token': str(token)}, status=status.HTTP_200_OK)
+        except User.DoesNotExist:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+class EmailConfirmationAPIView(APIView):
+    permission_classes = (permissions.AllowAny,)
+    serializer_class = EmailConfirmationSerializer
+
+    def post(self, request):
+        user = User.objects.get(email=request.data['email'])
+        confirmation_code = default_token_generator.make_token(user)
+        user.confirmation_code = confirmation_code
+        user.save()
+        send_mail('Confirmation',
+                  f'Your code: {confirmation_code}',
+                  'admin@admin.ru',
+                  [request.data['email']])
+        return Response({'status': "send email"}, status=status.HTTP_200_OK)
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -27,26 +52,16 @@ class UserViewSet(viewsets.ModelViewSet):
     lookup_field = 'username'
     permission_classes = [IsADM, permissions.IsAuthenticated]
 
-
-class MeDetail(APIView):
-
-    permission_classes = (permissions.IsAuthenticated, )
-
-    def get_object(self, request):
-        try:
-            return User.objects.get(username=request.user.username)
-        except User.DoesNotExist:
-            raise Http404
-
-    def get(self, request):
-        me = self.get_object(request)
-        serializer = DetailSerializer(me)
-        return Response(serializer.data)
-
-    def patch(self, request):
-        me = self.get_object(request)
-        serializer = DetailSerializer(me, data=request.data, partial=True)
-
+    @action(
+        detail=False,
+        methods=['get', 'patch'],
+        url_path='me',
+        url_name='me',
+        permission_classes=[permissions.IsAuthenticated]
+    )
+    def view_me(self, request):
+        user = User.objects.get(username=request.user.username)
+        serializer = DetailSerializer(user, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
