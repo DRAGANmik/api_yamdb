@@ -66,53 +66,7 @@ class Title(models.Model):
 class Review(models.Model):
     text = models.TextField()
     author = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="reviews"
-    )
-    title = models.ForeignKey(
-        Title, on_delete=models.CASCADE, related_name="reviews"
-    )
-    pub_date = models.DateTimeField(
-        "Дата добавления", auto_now_add=True, db_index=True
-    )
-    score = models.IntegerField(
-        validators=[MinValueValidator(1), MaxValueValidator(10)],
-        blank=True
-    )
-
-    def __str__(self):
-        return self.text
-
-    class Meta:
-        ordering = ['id']
-        constraints = [
-            models.UniqueConstraint(fields=['title', 'author'],
-                                    name='unique_pair')
-        ]
-
-
-class Comment(models.Model):
-    text = models.TextField()
-    author = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="comments"
-    )
-    pub_date = models.DateTimeField(
-        "Дата добавления", auto_now_add=True, db_index=True
-    )
-    review = models.ForeignKey(
-        Review, on_delete=models.CASCADE, related_name="comments"
-    )
-
-    def __str__(self):
-        return self.text
-
-    class Meta:
-        ordering = ['id']
-
-
-class Review(models.Model):
-    text = models.TextField()
-    author = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='reviews'
+        User, on_delete=models.CASCADE
     )
     title = models.ForeignKey(
         Title, on_delete=models.CASCADE, related_name='reviews'
@@ -125,31 +79,33 @@ class Review(models.Model):
         blank=True
     )
 
-    def __str__(self):
-        return self.text
-
     class Meta:
         ordering = ['id']
+        verbose_name = 'review'
         constraints = [
             models.UniqueConstraint(fields=['title', 'author'],
                                     name='unique_pair')
         ]
 
+    def __str__(self):
+        return self.text
+
 
 class Comment(models.Model):
     text = models.TextField()
     author = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="comments"
+        User, on_delete=models.CASCADE
     )
     pub_date = models.DateTimeField(
-        "Дата добавления", auto_now_add=True, db_index=True
+        'Дата добавления', auto_now_add=True, db_index=True
     )
     review = models.ForeignKey(
-        Review, on_delete=models.CASCADE, related_name="comments"
+        Review, on_delete=models.CASCADE, related_name='comments'
     )
-
-    def __str__(self):
-        return self.text
 
     class Meta:
         ordering = ['id']
+        verbose_name = 'comment'
+
+    def __str__(self):
+        return self.text

@@ -48,5 +48,3 @@ class User(AbstractBaseUser, PermissionsMixin):
     @property
     def is_moderator(self):
         return self.Role.MODERATOR
-
-

@@ -20,11 +20,18 @@ class TokenAPI(APIView):
         email = request.data.get('email')
         confirmation_code = self.request.data.get('confirmation_code')
         try:
-            user = get_object_or_404(User, email=email, confirmation_code=confirmation_code)
+            user = get_object_or_404(
+                User,
+                email=email,
+                confirmation_code=confirmation_code
+            )
             token = AccessToken.for_user(user)
             # refresh
             user.confirmation_code = default_token_generator.make_token(user)
-            return Response({'token': str(token)}, status=status.HTTP_201_CREATED)
+            return Response(
+                {'token': str(token)},
+                status=status.HTTP_201_CREATED
+            )
         except User.DoesNotExist:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
@@ -42,7 +49,11 @@ class EmailConfirmationAPIView(APIView):
                   f'Your code: {confirmation_code}',
                   'admin@admin.ru',
                   [request.data['email']])
-        return Response({'status': "send email"}, status=status.HTTP_201_CREATED)
+        return Response(
+            {'status': "send email"},
+            status=status.HTTP_201_CREATED
+        )
+
 
 class UserViewSet(viewsets.ModelViewSet):
 

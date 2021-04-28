@@ -6,17 +6,8 @@ class IsModeratorOrAuthor(BasePermission):
     def has_object_permission(self, request, view, obj):
         if request.method in SAFE_METHODS:
             return True
-        if request.user.role == 'moderator' and request.method == 'DELETE':
-            return True
-        else:
-            return obj.author == request.user
-
-
-class IsModeratorOrAuthor(BasePermission):
-    def has_object_permission(self, request, view, obj):
-        if request.method in SAFE_METHODS:
-            return True
-        if request.user.role == 'moderator' and request.method == 'DELETE':
+        if request.user.role == request.user.is_moderator\
+                and request.method == 'DELETE':
             return True
         else:
             return obj.author == request.user

@@ -30,10 +30,6 @@ class TitleViewSet(viewsets.ModelViewSet):
     filter_backends = (DjangoFilterBackend,)
     filterset_class = TitleFilter
 
-    def get_queryset(self):
-        queryset = Title.objects.annotate(rating=Avg('reviews__score'))
-        return queryset.order_by('id')
-
     def get_serializer_class(self):
         actions = ['list', 'retrieve']
         if self.action in actions:
@@ -64,11 +60,19 @@ class CommentViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticatedOrReadOnly, IsModeratorOrAuthor]
 
     def perform_create(self, serializer):
-        review = get_object_or_404(Review, pk=self.kwargs.get('review_id'))
+        review = get_object_or_404(
+            Review,
+            pk=self.kwargs.get('review_id'),
+            title_id=self.kwargs.get('title_id')
+        )
         serializer.save(author=self.request.user, review=review)
 
     def get_queryset(self):
-        review = get_object_or_404(Review, pk=self.kwargs.get('review_id'))
+        review = get_object_or_404(
+            Review,
+            pk=self.kwargs.get('review_id'),
+            title_id=self.kwargs.get('title_id')
+        )
         queryset = Comment.objects.filter(review=review)
         return queryset
 
