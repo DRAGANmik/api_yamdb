@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import PermissionsMixin
 from django.contrib.auth.base_user import AbstractBaseUser
-from .managers import UserManager
+from users.managers import UserManager
 
 
 class User(AbstractBaseUser, PermissionsMixin):
@@ -25,7 +25,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    confirmation_code = models.CharField(max_length=20)
+    confirmation_code = models.CharField(max_length=25)
 
     objects = UserManager()
 
@@ -43,8 +43,8 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     @property
     def is_admin(self):
-        return self.Role.ADMIN
+        return self.Role.ADMIN == self.role
 
     @property
     def is_moderator(self):
-        return self.Role.MODERATOR
+        return self.Role.MODERATOR == self.role

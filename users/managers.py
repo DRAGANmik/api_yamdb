@@ -23,7 +23,7 @@ class UserManager(BaseUserManager):
         user = self.create_user(email, username, password)
         user.is_superuser = True
         user.is_staff = True
-        user.role = user.role.ADMIN
+        user.role = user.Role.ADMIN
         user.save()
 
         return user
