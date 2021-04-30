@@ -20,7 +20,7 @@ class TokenSerializer(serializers.ModelSerializer):
             email=email,
             confirmation_code=confirmation_code
         )
-        if not user:
+        if not user.exists():
             raise serializers.ValidationError(
                 'Неверный email или confirmation_code'
             )
@@ -36,18 +36,16 @@ class EmailConfirmationSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         email = validated_data['email']
-        user = User.objects.filter(email=email)
-        print(user)
-        if not user:
-            username = email
+
+        user, created = User.objects.get_or_create(
+            email=email,
+            defaults={'username': email}
+        )
+
+        if created:
             password = User.objects.make_random_password()
-            user = User(
-                email=email,
-                username=username,
-            )
             user.set_password(password)
-        else:
-            user = User.objects.get(email=email)
+
         confirmation_code = default_token_generator.make_token(user)
         user.confirmation_code = confirmation_code
         user.save()
