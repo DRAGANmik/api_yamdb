@@ -1,0 +1,17 @@
+[tool.black]
+line-length = 79
+include = '\.pyi?$'
+exclude = '''
+(
+  /(
+    | venv
+    | _build
+    | buck-out
+    | build
+    | dist
+    | migrations
+    | config/settings
+    | tests
+  )/
+)
+'''
