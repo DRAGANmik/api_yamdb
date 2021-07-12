@@ -11,18 +11,17 @@ class TokenSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['email', 'confirmation_code']
+        fields = ["email", "confirmation_code"]
 
     def validate(self, data):
-        email = data['email']
-        confirmation_code = data['confirmation_code']
+        email = data["email"]
+        confirmation_code = data["confirmation_code"]
         user = User.objects.filter(
-            email=email,
-            confirmation_code=confirmation_code
+            email=email, confirmation_code=confirmation_code
         )
         if not user.exists():
             raise serializers.ValidationError(
-                'Неверный email или confirmation_code'
+                "Неверный email или confirmation_code"
             )
         return data
 
@@ -32,14 +31,13 @@ class EmailConfirmationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['email']
+        fields = ["email"]
 
     def create(self, validated_data):
-        email = validated_data['email']
+        email = validated_data["email"]
 
         user, created = User.objects.get_or_create(
-            email=email,
-            defaults={'username': email}
+            email=email, defaults={"username": email}
         )
 
         if created:
@@ -49,28 +47,28 @@ class EmailConfirmationSerializer(serializers.ModelSerializer):
         confirmation_code = default_token_generator.make_token(user)
         user.confirmation_code = confirmation_code
         user.save()
-        send_mail('Confirmation_code',
-                  f'Your code: {confirmation_code}',
-                  'admin@admin.ru',
-                  [email])
+        send_mail(
+            "Confirmation_code",
+            f"Your code: {confirmation_code}",
+            "admin@admin.ru",
+            [email],
+        )
         return user
 
 
 class UserSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = User
         fields = [
-            'username',
-            'last_name',
-            'first_name',
-            'email',
-            'bio',
-            'role'
+            "username",
+            "last_name",
+            "first_name",
+            "email",
+            "bio",
+            "role",
         ]
 
 
 class DetailSerializer(UserSerializer):
-
     class Meta(UserSerializer.Meta):
-        read_only_fields = ('role',)
+        read_only_fields = ("role",)

@@ -2,8 +2,12 @@ from rest_framework.decorators import action
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, viewsets, permissions
-from users.serializers import UserSerializer,\
-    DetailSerializer, EmailConfirmationSerializer, TokenSerializer
+from users.serializers import (
+    UserSerializer,
+    DetailSerializer,
+    EmailConfirmationSerializer,
+    TokenSerializer,
+)
 from users.models import User
 from users.permissions import IsADM
 from django.contrib.auth.tokens import default_token_generator
@@ -20,10 +24,7 @@ class TokenAPI(APIView):
         token = AccessToken.for_user(user)
         # refresh
         user.confirmation_code = default_token_generator.make_token(user)
-        return Response(
-            {'token': str(token)},
-            status=status.HTTP_201_CREATED
-        )
+        return Response({"token": str(token)}, status=status.HTTP_201_CREATED)
 
 
 class EmailConfirmationAPIView(APIView):
@@ -35,24 +36,23 @@ class EmailConfirmationAPIView(APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(
-            {'status': "send email"},
-            status=status.HTTP_201_CREATED
+            {"status": "send email"}, status=status.HTTP_201_CREATED
         )
 
 
 class UserViewSet(viewsets.ModelViewSet):
 
-    queryset = User.objects.all().order_by('id')
+    queryset = User.objects.all().order_by("id")
     serializer_class = UserSerializer
-    lookup_field = 'username'
+    lookup_field = "username"
     permission_classes = [IsADM, permissions.IsAuthenticated]
 
     @action(
         detail=False,
-        methods=['GET', 'PATCH'],
-        url_path='me',
-        url_name='me',
-        permission_classes=[permissions.IsAuthenticated]
+        methods=["GET", "PATCH"],
+        url_path="me",
+        url_name="me",
+        permission_classes=[permissions.IsAuthenticated],
     )
     def view_me(self, request):
         user = User.objects.get(username=request.user.username)

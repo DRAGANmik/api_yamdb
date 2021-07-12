@@ -6,15 +6,13 @@ from users.managers import UserManager
 
 class User(AbstractBaseUser, PermissionsMixin):
     class Role(models.TextChoices):
-        USER = 'user'
-        MODERATOR = 'moderator'
-        ADMIN = 'admin'
+        USER = "user"
+        MODERATOR = "moderator"
+        ADMIN = "admin"
 
     bio = models.TextField(max_length=500, blank=True)
     role = models.CharField(
-        max_length=15,
-        choices=Role.choices,
-        default=Role.USER
+        max_length=15, choices=Role.choices, default=Role.USER
     )
 
     email = models.EmailField(unique=True)
@@ -29,8 +27,8 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     objects = UserManager()
 
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username']
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = ["username"]
 
     def __str__(self):
         return self.email
