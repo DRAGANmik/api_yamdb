@@ -1,5 +1,6 @@
 [![pep8 codestyle](https://github.com/DRAGANmik/api_yamdb/actions/workflows/codestyle.yml/badge.svg?branch=master)](https://github.com/DRAGANmik/api_yamdb/actions/workflows/codestyle.yml)
-[![tests](https://github.com/DRAGANmik/api_yamdb/actions/workflows/tests.yml/badge.svg)](https://github.com/DRAGANmik/api_yamdb/actions/workflows/tests.yml)
+[![tests](https://github.com/DRAGANmik/api_yamdb/actions/workflows/tests.yml/badge.svg)]
+(https://github.com/DRAGANmik/api_yamdb/actions/workflows/tests.yml)
 # api_yamdb
 
 Бэкенд для проекта YaMDb - аналог Кинопоиска и IMDb. Сервис для оценивая фильмов
