@@ -2,7 +2,7 @@
 [![tests](https://github.com/DRAGANmik/api_yamdb/actions/workflows/tests.yml/badge.svg)](https://github.com/DRAGANmik/api_yamdb/actions/workflows/tests.yml)
 # api_yamdb
 
-Бэкенд для проекта YaMDb - аналог Кинопоиска и IMDb. Сервис для оценивая фильмов
+Бэкенд для проекта YaMDb - сервис для оценивая, музыки и книг.
 
 ## Команда разработки:
 * Драган Михаил
