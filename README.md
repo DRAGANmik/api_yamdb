@@ -15,6 +15,7 @@
 Python 3.7+
 Django
 Django REST Framework
+Black - форматирование кода
 *тут нужно дополнить*
 ```
 ## В проект добавлен Makefile для облегчения запуска management команд
